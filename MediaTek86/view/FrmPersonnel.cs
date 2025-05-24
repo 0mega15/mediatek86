@@ -10,8 +10,14 @@ using System.Windows.Forms;
 
 namespace MediaTek86.view
 {
+    /// <summary>
+    /// Formulaire de gestion du personnel.
+    /// </summary>
     public partial class FrmPersonnel : Form
     {
+        /// <summary>
+        /// Initialise une nouvelle instance de la classe <see cref="FrmPersonnel"/>.
+        /// </summary>
         public FrmPersonnel()
         {
             InitializeComponent();

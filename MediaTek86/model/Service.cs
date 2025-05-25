@@ -8,5 +8,19 @@ namespace MediaTek86.model
 {
     internal class Service
     {
+        public int Idservice { get; }
+
+        public string Nom { get;  }
+
+        public Service(int idservice, string nom)
+        {
+            this.Idservice = idservice;
+            this.Nom = nom;
+        }
+
+        public override string ToString()
+        {
+            return this.Nom;
+        }
     }
 }

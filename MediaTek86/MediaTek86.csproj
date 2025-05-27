@@ -94,6 +94,7 @@
       <DependentUpon>FrmPersonnel.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Documentation technique.zip" />
+    <None Include="MediaTek86Installeur.msi" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

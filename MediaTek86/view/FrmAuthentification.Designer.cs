@@ -59,13 +59,16 @@
             this.textBoxUtilisateur.Name = "textBoxUtilisateur";
             this.textBoxUtilisateur.Size = new System.Drawing.Size(209, 22);
             this.textBoxUtilisateur.TabIndex = 2;
+            this.textBoxUtilisateur.Text = "admin";
             // 
             // textBoxPwd
             // 
             this.textBoxPwd.Location = new System.Drawing.Point(138, 66);
             this.textBoxPwd.Name = "textBoxPwd";
+            this.textBoxPwd.PasswordChar = '*';
             this.textBoxPwd.Size = new System.Drawing.Size(209, 22);
             this.textBoxPwd.TabIndex = 3;
+            this.textBoxPwd.Text = "5nhFz2jYuXxB";
             // 
             // btnConnexion
             // 
@@ -75,6 +78,7 @@
             this.btnConnexion.TabIndex = 4;
             this.btnConnexion.Text = "connexion";
             this.btnConnexion.UseVisualStyleBackColor = true;
+            this.btnConnexion.Click += new System.EventHandler(this.btnConnexion_Click);
             // 
             // FrmAuthentification
             // 

@@ -16,6 +16,31 @@ namespace MediaTek86.dal
             access = Access.GetInstance();
         }
 
+        public Boolean ControleAuthentification(Admin admin)
+        {
+            if (access.Manager != null)
+            {
+                string req = "SELECT * FROM responsable WHERE login = @login AND pwd = SHA2(@pwd, 256);";
+                Dictionary<string, object> parameters = new Dictionary<string, object>();
+                parameters.Add("@login", admin.Login);
+                parameters.Add("@pwd", admin.Pwd);
+                try
+                {
+                    List<Object[]> records = access.Manager.ReqSelect(req, parameters);
+                    if (records != null && records.Count > 0)
+                    {
+                        return true; // Authentification réussie
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    Environment.Exit(0);
+                }
+            }
+            return false; // Authentification échouée
+        }
+
         public List<Personnel> GetLesPersonnels() 
         { 
             List<Personnel> lesPersonnels = new List<Personnel>();

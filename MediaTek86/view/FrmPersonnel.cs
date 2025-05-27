@@ -19,9 +19,15 @@ namespace MediaTek86.view
     {
         private Boolean enCoursModifPersonnel = false;
 
+        private Boolean enCoursModifAbsence = false;
+
         private BindingSource bdgPersonnel = new BindingSource();
 
         private BindingSource bdgService = new BindingSource();
+
+        private BindingSource bdgAbsence = new BindingSource();
+
+        private BindingSource bdgMotif = new BindingSource();
 
         private FrmPersonnelController controller;
         /// <summary>
@@ -32,14 +38,27 @@ namespace MediaTek86.view
             InitializeComponent();
             Init();
         }
-
         private void Init()
-        { 
+        {
             controller = new FrmPersonnelController();
             RemplirListePersonnel();
+            if (dgvPersonnel.Rows.Count > 0)
+            {
+                dgvPersonnel.Rows[0].Selected = true;
+            }
+            bdgPersonnel.CurrentChanged += bdgPersonnel_CurrentChanged;
             RemplirListeService();
+            RemplirListeAbsence();
+            RemplirListeMotif();
             EnCoursModifPersonnel(false);
+            EnCoursModifAbsence(false);
         }
+
+        private void bdgPersonnel_CurrentChanged(object sender, EventArgs e)
+        {
+            RemplirListeAbsence();
+        }
+
         private void RemplirListePersonnel()
         {
             List<Personnel> lesPersonnels = controller.GetLesPersonnels();
@@ -49,7 +68,6 @@ namespace MediaTek86.view
             dgvPersonnel.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
         }
 
-
         private void RemplirListeService()
         {
             List<Service> lesServices = controller.GetLesServices();
@@ -57,10 +75,28 @@ namespace MediaTek86.view
             cboService.DataSource = bdgService;
         }
 
-
-        private void groupBox1_Enter(object sender, EventArgs e)
+        private void RemplirListeAbsence()
         {
+            if (dgvPersonnel.SelectedRows.Count > 0)
+            {
+                var personnel = bdgPersonnel.Current as Personnel;
+                if (personnel != null)
+                {
+                    int idPersonnel = personnel.Idpersonnel;
+                    List<Absence> lesAbsence = controller.GetLesAbsences(idPersonnel);
+                    bdgAbsence.DataSource = lesAbsence;
+                    dgvAbsence.DataSource = bdgAbsence;
+                    dgvAbsence.Columns["Personnel"].Visible = false;
+                    dgvAbsence.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+                }
+            }
+        }
 
+        private void RemplirListeMotif()
+        {
+            List<Motif> lesMotifs = controller.GetLesMotifs();
+            bdgMotif.DataSource = lesMotifs;
+            cboMotif.DataSource = bdgMotif;
         }
 
         private void btnModifPersonnel_Click(object sender, EventArgs e)
@@ -141,8 +177,10 @@ namespace MediaTek86.view
 
         private void EnCoursModifPersonnel(Boolean modif)
         {
-            enCoursModifPersonnel = true;
+            enCoursModifPersonnel = modif;
             grbPersonnel.Enabled = !modif;
+            grbAbcense.Enabled = !modif;
+            grbAddAbsence.Enabled = !modif;
             if (modif)
             {
                 grbAddPersonnel.Text = "Modifier un personnel";
@@ -154,7 +192,96 @@ namespace MediaTek86.view
                 textBoxPrenom.Text = string.Empty;
                 textBoxMail.Text = string.Empty;
                 textBoxTelephone.Text = string.Empty;
+                cboService.SelectedIndex = -1;
             }
         }
+
+        private void EnCoursModifAbsence(Boolean modif)
+        {
+            enCoursModifAbsence = modif;
+            grbPersonnel.Enabled = !modif;
+            grbAddPersonnel.Enabled = !modif;
+            if (modif)
+            {
+                grbAddAbsence.Text = "Modifier une absence";
+            }
+            else
+            {
+                grbAddAbsence.Text = "Ajouter une absence";
+                dateTimePickerDDebut.Value = DateTime.Now;
+                dateTimePickerDFin.Value = DateTime.Now;
+                cboMotif.SelectedIndex = -1;
+            }
+
+        }
+
+        private void btnModifAbsence_Click(object sender, EventArgs e)
+        {
+            if (dgvAbsence.SelectedRows.Count > 0)
+            {
+                EnCoursModifAbsence(true);
+                Absence absence = (Absence)bdgAbsence.List[bdgAbsence.Position];
+                dateTimePickerDDebut.Value = absence.Date_debut;
+                dateTimePickerDFin.Value = absence.Date_fin;
+                cboMotif.SelectedIndex = cboMotif.FindStringExact(absence.Motif.Nom);
+            }
+            else
+            {
+                MessageBox.Show("Veuillez sélectionner une absence à modifier.", "Avertissement", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void btnSupprAbsence_Click(object sender, EventArgs e)
+        {
+            if (dgvAbsence.SelectedRows.Count > 0)
+            {
+                if (MessageBox.Show("Voulez-vous vraiment supprimer cette absence ?", "Confirmation", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    Absence absence = (Absence)bdgAbsence.Current;
+                    controller.DelAbsence(absence);
+                    RemplirListeAbsence();
+                }
+            }
+            else
+            {
+                MessageBox.Show("Veuillez sélectionner une absence à supprimer.", "Avertissement", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void btnSaveAbsence_Click(object sender, EventArgs e)
+        {
+            if (cboMotif.SelectedItem == null || dateTimePickerDDebut.Value >= dateTimePickerDFin.Value)
+            {
+                MessageBox.Show("Veuillez sélectionner un motif et vérifier les dates.", "Avertissement", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            Motif motif = (Motif)cboMotif.SelectedItem;
+            Personnel personnel = (Personnel)bdgPersonnel.List[bdgPersonnel.Position];
+            if (enCoursModifAbsence)
+            {
+                Absence absence = (Absence)bdgAbsence.List[bdgAbsence.Position];
+                absence.Personnel = personnel;
+                absence.Date_debut = dateTimePickerDDebut.Value;
+                absence.Date_fin = dateTimePickerDFin.Value;
+                absence.Motif = motif;
+                controller.UpdAbsence(absence);
+            }
+            else
+            {
+                Absence absence = new Absence(personnel, dateTimePickerDDebut.Value, dateTimePickerDFin.Value ,motif);
+                controller.AddAbsence(absence);
+            }
+            RemplirListeAbsence();
+            EnCoursModifAbsence(false);
+        }
+
+        private void btnCancelAbsence_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Voulez-vous vraiment annuler ?", "Confirmation", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                EnCoursModifAbsence(false);
+            }
+        }
+        
     }
 }

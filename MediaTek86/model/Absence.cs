@@ -8,17 +8,17 @@ namespace MediaTek86.model
 {
     internal class Absence
     {
-        public Absence(Personnel personnel, int ddebut, int dfin, Motif motif) 
+        public Absence(Personnel personnel, DateTime ddebut, DateTime dfin, Motif motif) 
         { 
             this.Personnel = personnel;
-            this.Ddebut = ddebut;
-            this.Dfin = dfin;
+            this.Date_debut = ddebut;
+            this.Date_fin = dfin;
             this.Motif = motif;
         }
 
-        public Personnel Personnel { get; }
-        public int Ddebut { get; set; }
-        public int Dfin { get; set; }
+        public Personnel Personnel { get; set; }
+        public DateTime Date_debut { get; set; }
+        public DateTime Date_fin { get; set; }
         public Motif Motif { get; set; }
     }
 }

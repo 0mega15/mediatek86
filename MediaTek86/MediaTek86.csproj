@@ -94,7 +94,6 @@
       <DependentUpon>FrmPersonnel.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Documentation technique.zip" />
-    <None Include="MediaTek86Installeur.msi" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -108,6 +107,8 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="mediatek86.sql" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
